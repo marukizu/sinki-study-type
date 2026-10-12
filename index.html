@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>信稀塾 勉強タイプ診断</title>
+<meta name="description" content="生年月日から動物キャラ・四柱推命の日干をもとに勉強の傾向の仮説を出す、信稀塾の講師用ツール。入力はブラウザ内だけで計算し、送信・保存しません。">
+<style>
+:root{
+  --navy:#1a3a6b;--navy-deep:#122a4f;--blue:#2f5da8;--blue-300:#8fabd4;--blue-100:#dfe8f5;--tint:#eef3fa;
+  --ink:#14181d;--ink-2:#4a5563;--ink-3:#78828f;--line:#e3e7ee;--soft:#f7f9fc;--accent:#f5872e;
+  --bg:#ffffff;--card:#ffffff;--card-2:var(--soft);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ink:#e8edf4;--ink-2:#b5c0cf;--ink-3:#8a96a6;--line:#2a3445;--soft:#151c27;--tint:#16223a;--blue-100:#1c2c49;
+    --bg:#0d131c;--card:#121a26;--card-2:#151c27;--navy:#8fabd4;--blue:#8fabd4;
+  }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Hiragino Kaku Gothic ProN","Yu Gothic UI","Meiryo",system-ui,sans-serif;line-height:1.7}
+header{background:var(--navy-deep);color:#fff;padding:20px 16px}
+header h1{margin:0;font-size:1.25rem;letter-spacing:.04em}
+header p{margin:4px 0 0;font-size:.85rem;opacity:.85}
+main{max-width:860px;margin:0 auto;padding:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin:16px 0}
+.card h2{margin:0 0 8px;font-size:1.05rem;color:var(--navy)}
+.note{font-size:.82rem;color:var(--ink-3)}
+.privacy{background:var(--tint);border-left:4px solid var(--blue);padding:10px 12px;border-radius:6px;font-size:.85rem}
+label{font-size:.9rem;font-weight:600;display:block;margin:10px 0 4px}
+input[type=date],select{width:100%;max-width:320px;padding:10px;border:1px solid var(--line);border-radius:8px;font-size:1rem;background:var(--card-2);color:var(--ink)}
+button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:10px 18px;font-size:1rem;font-weight:700;cursor:pointer;margin-top:12px}
+button.sub{background:var(--blue)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--blue-300);outline-offset:2px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+.pill{display:inline-block;background:var(--blue-100);color:var(--navy);border-radius:999px;padding:2px 10px;font-size:.8rem;font-weight:700;margin-right:6px}
+.big{font-size:1.6rem;font-weight:800;color:var(--navy);margin:2px 0}
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+th,td{border-bottom:1px solid var(--line);padding:6px 4px;text-align:left;vertical-align:top}
+th{color:var(--ink-2);font-weight:600;width:28%}
+ul{padding-left:1.2em;margin:6px 0}
+.hidden{display:none}
+textarea{width:100%;min-height:220px;padding:10px;border:1px solid var(--line);border-radius:8px;font-size:.85rem;background:var(--card-2);color:var(--ink);font-family:inherit}
+.bar{height:10px;border-radius:5px;background:var(--blue)}
+.five{display:grid;grid-template-columns:40px 1fr 24px;gap:6px;align-items:center;font-size:.85rem}
+footer{max-width:860px;margin:0 auto;padding:16px;font-size:.78rem;color:var(--ink-3)}
+</style>
+</head>
+<body>
+<header>
+  <h1>信稀塾 勉強タイプ診断（講師用）</h1>
+  <p>動物キャラ・5アニマル・四柱推命をもとに、勉強の傾向の「仮説」を出すツール</p>
+</header>
+<main>
+  <div class="privacy">
+    <strong>個人情報について：</strong>生年月日はこの画面の中だけで計算し、どこにも送信・保存しません（ページを閉じると消えます）。
+    結果をメモするときは<strong>生年月日を書かず、タイプ名だけ</strong>を記録してください。
+  </div>
+
+  <section class="card">
+    <h2>1. 生年月日を入力</h2>
+    <label for="birth">生年月日</label>
+    <input type="date" id="birth" min="1930-01-01" max="2025-12-31">
+    <div><button id="run" type="button">診断する</button></div>
+    <p class="note">占いは科学的な性格診断ではありません。生徒と「当たってる？」と話すきっかけとして使い、結果で決めつけないでください。</p>
+  </section>
+
+  <div id="result" class="hidden">
+    <section class="card">
+      <h2>2. 結果</h2>
+      <div class="grid">
+        <div><span class="pill">動物キャラ（本質）</span><div class="big" id="animal"></div><div class="note" id="animalNo"></div></div>
+        <div><span class="pill">3分類</span><div class="big" id="group"></div><div class="note" id="groupDesc"></div></div>
+        <div><span class="pill">四柱推命の日干</span><div class="big" id="stem"></div><div class="note" id="stemImg"></div></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>3. 四柱推命の命式（時柱なし）</h2>
+      <table>
+        <tr><th>年柱</th><td id="yp"></td></tr>
+        <tr><th>月柱</th><td id="mp"></td></tr>
+        <tr><th>日柱</th><td id="dp"></td></tr>
+      </table>
+      <p class="note">年柱・月柱は節入り（立春など）を概算で判定しています。節入りの前後1日に生まれた場合はずれる可能性があります。出生時刻は使いません。</p>
+      <div id="five"></div>
+    </section>
+
+    <section class="card">
+      <h2>4. 5アニマル（任意・公式サイトの結果を選ぶ）</h2>
+      <p class="note">5アニマルの「表面・意思決定・希望・隠れ」は計算方法が公開されていないため、このツールでは計算しません。
+      <a href="https://www.doubutsu-uranai.com/uranai_chara_5animals.php" target="_blank" rel="noopener noreferrer">公式サイト</a>で調べた結果を選ぶと、勉強の傾向に反映されます（本質は上の動物キャラを使います）。</p>
+      <div class="grid" id="facetSelects"></div>
+      <div><button id="rerun" class="sub" type="button">5アニマルを反映する</button></div>
+    </section>
+
+    <section class="card">
+      <h2>5. 勉強の傾向（仮説）</h2>
+      <div id="tendency"></div>
+    </section>
+
+    <section class="card">
+      <h2>6. 個別勉強マニュアルに貼る用</h2>
+      <p class="note">生年月日は含まれていません。Notion の「個別勉強マニュアル」の「1. 自分のタイプと勉強スタイル」に貼り付けてください。</p>
+      <textarea id="copyText" readonly aria-label="コピー用テキスト"></textarea>
+      <div><button id="copy" class="sub" type="button">コピー</button> <span id="copied" class="note"></span></div>
+    </section>
+  </div>
+</main>
+<footer>
+  信稀塾 講師用ツール。動物キャラは日干支（60分類）から一般に知られている対応表で算出しています。公式サイトの結果と異なる場合は公式を優先してください。
+  「どうぶつ占い」は株式会社ノラコムの登録商標です。本ツールは同社とは関係ありません。勉強の傾向は信稀塾が独自に考えた仮説です。
+</footer>
+
+<script>
+(function(){
+  'use strict';
+  var STEMS = ['甲','乙','丙','丁','戊','己','庚','辛','壬','癸'];
+  var BRANCHES = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+  var STEM_EL = ['木','木','火','火','土','土','金','金','水','水'];
+  var BRANCH_EL = ['水','土','木','木','土','火','火','土','金','金','土','水'];
+  var ELEMENTS = ['木','火','土','金','水'];
+
+  // 干支番号（1〜60）→ 12動物（一般に知られている対応表）
+  var ANIMAL_BY_NO = [
+    'チータ','たぬき','猿','コアラ','黒ひょう','虎','チータ','たぬき','猿','コアラ',
+    'こじか','ゾウ','狼','ひつじ','猿','コアラ','こじか','ゾウ','狼','ひつじ',
+    'ペガサス','ペガサス','ひつじ','狼','狼','ひつじ','ペガサス','ペガサス','ひつじ','狼',
+    'ゾウ','こじか','コアラ','猿','ひつじ','狼','ゾウ','こじか','コアラ','猿',
+    'たぬき','チータ','虎','黒ひょう','コアラ','猿','たぬき','チータ','虎','黒ひょう',
+    'ライオン','ライオン','黒ひょう','虎','虎','黒ひょう','ライオン','ライオン','黒ひょう','虎'
+  ];
+  var GROUP = {
+    'こじか':'MOON','黒ひょう':'MOON','たぬき':'MOON','ひつじ':'MOON',
+    '狼':'EARTH','猿':'EARTH','虎':'EARTH','コアラ':'EARTH',
+    'チータ':'SUN','ライオン':'SUN','ゾウ':'SUN','ペガサス':'SUN'
+  };
+  var GROUP_INFO = {
+    MOON:{desc:'人との関係・安心感を大事にするタイプ',study:'信頼できる講師・仲間との関係づくりを先に。こまめな声かけと「一緒にやる」環境で伸びやすい。'},
+    EARTH:{desc:'目標・計画・成果を大事にするタイプ',study:'数字で見える目標と計画を本人と決める。時間の使い方の効率や、達成リストのレベルアップが響きやすい。'},
+    SUN:{desc:'可能性・気分・ノリを大事にするタイプ',study:'大きな夢と「できる」という期待を伝える。細かく縛りすぎず、勢いがあるときに一気に進める。'}
+  };
+  var ANIMAL = {
+    '狼':{trait:'自分のペース・独自のやり方を大事にする',how:'一人で集中できる時間を確保し、計画は本人に作らせる',talk:'やり方を押しつけず「あなたらしい」を認める'},
+    'こじか':{trait:'信頼できる人と一緒だと力を出せる。慎重',how:'こまめな報告・確認。一緒にやる仲間がいる環境',talk:'小さなことも褒める。安心感を伝える'},
+    '猿':{trait:'器用で短期集中が得意。ゲーム感覚が好き',how:'短い制限時間・小テスト・スコアづけ',talk:'すぐに結果を返す。「今日は何点？」'},
+    'チータ':{trait:'チャレンジ精神と瞬発力。飽きやすい面も',how:'高い目標＋短い区切り。科目をこまめに切り替える',talk:'「これは難しいよ」と挑戦として出す'},
+    '黒ひょう':{trait:'新しいもの好き。プライドと美意識がある',how:'見た目にこだわったノート・ツール。新しいやり方を試す',talk:'人前で責めない。メンツを大事にする'},
+    'ライオン':{trait:'完璧主義で自分に厳しい。特別扱いが好き',how:'質の高い参考書・高い基準。計画どおりに進める',talk:'期待していることを伝える。完璧でなくてもよいとも伝える'},
+    '虎':{trait:'バランス感覚と面倒見の良さ。自分で決めたい',how:'全科目をバランスよく。友達に教えて理解を深める',talk:'選択肢を示して本人に決めさせる'},
+    'たぬき':{trait:'経験と実績を重んじる。人当たりが良い',how:'定番の参考書・先輩のやり方。繰り返しで身につける',talk:'「合格した人はこうやっていた」と実績で示す'},
+    'コアラ':{trait:'長期的な計画が得意。休む時間も必要',how:'逆算の年間計画＋休憩を先に予定に入れる',talk:'先の見通しを示す。休むことも計画と認める'},
+    'ゾウ':{trait:'努力家で、やると決めたらやり抜く',how:'1つの目標に集中。繰り返し・長時間の積み上げ',talk:'努力そのものを認める。無理のしすぎに注意'},
+    'ひつじ':{trait:'協調性があり、みんなと一緒が好き',how:'自習室や仲間と一緒に勉強。役割を持つ',talk:'「みんなも頑張ってる」。孤立させない'},
+    'ペガサス':{trait:'自由で気分屋。ひらめきがある',how:'気分に合わせて科目を選べる「メニュー式」の計画',talk:'縛りすぎない。ノリと勢いを大事にする'}
+  };
+  var STEM_INFO = {
+    '甲':{img:'木・大樹',trait:'まっすぐ伸びる向上心。一度決めたら曲げない',study:'長期目標を決めて一本道で積み上げる。計画を変えるときは理由を説明する'},
+    '乙':{img:'木・草花',trait:'柔軟で協調的。しなやかな粘り強さ',study:'仲間や環境に合わせて伸びる。小さな成功を重ねる'},
+    '丙':{img:'火・太陽',trait:'明るくエネルギッシュ。飽きやすさも',study:'目立つ目標と短期決戦。人に教えると定着しやすい'},
+    '丁':{img:'火・灯火',trait:'内に秘めた情熱と集中力。繊細',study:'静かな環境で深く取り組む。丁寧なフィードバックが効く'},
+    '戊':{img:'土・山',trait:'どっしり安定。マイペース',study:'決まったルーティンを固める。急な計画変更は避ける'},
+    '己':{img:'土・田畑',trait:'吸収力があり面倒見がよい。心配性な面も',study:'基礎を育てる復習中心の計画。不安を言葉にさせる'},
+    '庚':{img:'金・鉄',trait:'決断力があり白黒はっきり。競争に強い',study:'ライバル・順位・明確な基準を置く'},
+    '辛':{img:'金・宝石',trait:'美意識とプライド。繊細',study:'量より質。きれいに整理したノート。人前で責めない'},
+    '壬':{img:'水・大河',trait:'スケールが大きく自由。束縛を嫌う',study:'大きなビジョンを共有し、流れで科目を切り替える'},
+    '癸':{img:'水・雨露',trait:'知的で慎重。想像力が豊か',study:'理解を重視し、じっくり考える時間をとる。見通しを示す'}
+  };
+  var FACETS = [
+    {key:'表面',hint:'塾や学校での見え方。初対面の印象に合わせた接し方の参考'},
+    {key:'意思決定',hint:'計画や志望校を決めるときの決め方の参考'},
+    {key:'希望',hint:'本人が無意識に憧れている姿。やる気の火種の参考'},
+    {key:'隠れ',hint:'ピンチ（スランプ・模試の失敗）のときに出る面。メンタル支援の参考'}
+  ];
+  var ANIMAL_NAMES = Object.keys(ANIMAL);
+
+  function daysFrom1900(y,m,d){ return Math.round((Date.UTC(y,m-1,d)-Date.UTC(1900,0,1))/86400000); }
+  function mod(a,n){ return ((a%n)+n)%n; }
+  function kanshi(i){ return STEMS[i%10]+BRANCHES[i%12]; }
+
+  // 節入り日（概算）：各月の節の目安日
+  var SETSU = {1:6,2:4,3:6,4:5,5:6,6:6,7:7,8:8,9:8,10:8,11:7,12:7};
+
+  function pillars(y,m,d){
+    var dayIdx = mod(daysFrom1900(y,m,d)+10,60);          // 1900-01-01 = 甲戌（10）
+    var afterSetsu = d >= SETSU[m];
+    var sy = (m < 2 || (m === 2 && !afterSetsu)) ? y-1 : y; // 立春前は前年
+    var yearIdx = mod(sy-4,60);                             // 1984 = 甲子
+    var monthNo = afterSetsu ? m : m-1;                     // 節月（1=小寒〜）
+    if (monthNo === 0) monthNo = 12;
+    var branch = mod(monthNo+0,12);                          // 1月節=丑, 2月節=寅 …
+    var firstStem = [2,4,6,8,0][yearIdx%10%5];               // 五虎遁：甲己→丙寅…
+    var offset = mod(branch-2,12);                           // 寅月からの月数
+    var mStem = mod(firstStem+offset,10);
+    return {day:dayIdx, year:yearIdx, mStem:mStem, mBranch:branch};
+  }
+
+  function el(tag,html){ var e=document.createElement(tag); e.innerHTML=html; return e; }
+  function esc(s){ return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+
+  var state = null;
+
+  function buildFacetSelects(){
+    var box = document.getElementById('facetSelects');
+    FACETS.forEach(function(f){
+      var wrap = document.createElement('div');
+      var id = 'facet-'+f.key;
+      var opts = '<option value="">（未選択）</option>' + ANIMAL_NAMES.map(function(a){return '<option>'+a+'</option>';}).join('');
+      wrap.innerHTML = '<label for="'+id+'">'+f.key+'</label><select id="'+id+'">'+opts+'</select><div class="note">'+f.hint+'</div>';
+      box.appendChild(wrap);
+    });
+  }
+
+  function run(){
+    var v = document.getElementById('birth').value;
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(v)) { alert('生年月日を入力してください'); return; }
+    var p = v.split('-').map(Number);
+    var pl = pillars(p[0],p[1],p[2]);
+    var no = pl.day + 1;
+    var animal = ANIMAL_BY_NO[pl.day];
+    var group = GROUP[animal];
+    var stem = STEMS[pl.day%10];
+    state = {no:no, animal:animal, group:group, stem:stem, pl:pl};
+
+    document.getElementById('animal').textContent = animal;
+    document.getElementById('animalNo').textContent = '干支番号 '+no+'（'+kanshi(pl.day)+'）';
+    document.getElementById('group').textContent = group;
+    document.getElementById('groupDesc').textContent = GROUP_INFO[group].desc;
+    document.getElementById('stem').textContent = stem+'（'+STEM_EL[pl.day%10]+'）';
+    document.getElementById('stemImg').textContent = STEM_INFO[stem].img;
+
+    var mK = STEMS[pl.mStem]+BRANCHES[pl.mBranch];
+    document.getElementById('yp').textContent = kanshi(pl.year);
+    document.getElementById('mp').textContent = mK;
+    document.getElementById('dp').textContent = kanshi(pl.day);
+
+    var chars = [pl.year%10, pl.mStem, pl.day%10].map(function(i){return STEM_EL[i];})
+      .concat([pl.year%12, pl.mBranch, pl.day%12].map(function(i){return BRANCH_EL[i];}));
+    var cnt = {}; ELEMENTS.forEach(function(e){cnt[e]=0;}); chars.forEach(function(e){cnt[e]++;});
+    var fiveHtml = '<p class="note" style="margin-top:10px">五行のバランス（年・月・日の6文字）</p>' + ELEMENTS.map(function(e){
+      return '<div class="five"><span>'+e+'</span><div class="bar" style="width:'+(cnt[e]/6*100)+'%;min-width:'+(cnt[e]?4:0)+'px"></div><span>'+cnt[e]+'</span></div>';
+    }).join('');
+    var lacking = ELEMENTS.filter(function(e){return cnt[e]===0;});
+    if (lacking.length) fiveHtml += '<p class="note">少ない五行：'+lacking.join('・')+'（参考）</p>';
+    document.getElementById('five').innerHTML = fiveHtml;
+
+    document.getElementById('result').classList.remove('hidden');
+    render();
+    document.getElementById('result').scrollIntoView({behavior:'smooth'});
+  }
+
+  function render(){
+    if (!state) return;
+    var a = ANIMAL[state.animal], g = GROUP_INFO[state.group], s = STEM_INFO[state.stem];
+    var facets = FACETS.map(function(f){ return {key:f.key, animal:document.getElementById('facet-'+f.key).value}; });
+
+    var html = '';
+    html += '<h3 style="margin:8px 0 4px;font-size:1rem">本質：'+esc(state.animal)+'（'+esc(state.group)+'）</h3><ul>'+
+      '<li>傾向：'+esc(a.trait)+'</li><li>合いそうなやり方：'+esc(a.how)+'</li><li>声かけ：'+esc(a.talk)+'</li><li>'+esc(state.group)+'：'+esc(g.study)+'</li></ul>';
+    html += '<h3 style="margin:12px 0 4px;font-size:1rem">四柱推命の日干：'+esc(state.stem)+'（'+esc(s.img)+'）</h3><ul>'+
+      '<li>傾向：'+esc(s.trait)+'</li><li>勉強の進め方：'+esc(s.study)+'</li></ul>';
+    var picked = facets.filter(function(f){return f.animal;});
+    if (picked.length){
+      html += '<h3 style="margin:12px 0 4px;font-size:1rem">5アニマル</h3><ul>';
+      picked.forEach(function(f){
+        var x = ANIMAL[f.animal];
+        var line = {
+          '表面':'塾や学校では「'+x.trait+'」ように見えやすい。初めのうちは「'+x.talk+'」を意識して接する',
+          '意思決定':'計画や志望校を決めるときは「'+x.how+'」の形で選ばせると決めやすい',
+          '希望':'憧れているのは「'+x.trait+'」姿。やる気が落ちたときの声かけの材料にする',
+          '隠れ':'スランプのときは「'+x.trait+'」面が出やすい。そのときは「'+x.talk+'」で支える'
+        }[f.key];
+        html += '<li><strong>'+esc(f.key)+'（'+esc(f.animal)+'）</strong>：'+esc(line)+'</li>';
+      });
+      html += '</ul>';
+    }
+    html += '<p class="note">すべて仮説です。体験・定期面談で実際に試し、合ったものだけを個別勉強マニュアルに残してください。</p>';
+    document.getElementById('tendency').innerHTML = html;
+
+    var t = [];
+    t.push('【勉強タイプ（仮説）】※生年月日は記録しない');
+    t.push('・動物キャラ（本質）：'+state.animal+'（'+state.group+'）');
+    t.push('　傾向：'+a.trait);
+    t.push('　合いそうなやり方：'+a.how);
+    t.push('　声かけ：'+a.talk);
+    t.push('　'+state.group+'：'+g.study);
+    t.push('・四柱推命の日干：'+state.stem+'（'+s.img+'）');
+    t.push('　傾向：'+s.trait);
+    t.push('　勉強の進め方：'+s.study);
+    picked.forEach(function(f){ t.push('・5アニマル '+f.key+'：'+f.animal); });
+    t.push('・本人の反応（当たってる／違う）：');
+    t.push('・試して合ったやり方：');
+    document.getElementById('copyText').value = t.join('\n');
+  }
+
+  document.addEventListener('DOMContentLoaded', function(){
+    buildFacetSelects();
+    document.getElementById('run').addEventListener('click', run);
+    document.getElementById('rerun').addEventListener('click', render);
+    document.getElementById('copy').addEventListener('click', function(){
+      var ta = document.getElementById('copyText');
+      var done = function(){ document.getElementById('copied').textContent = 'コピーしました'; };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(ta.value).then(done, function(){ ta.select(); document.execCommand('copy'); done(); });
+      } else { ta.select(); document.execCommand('copy'); done(); }
+    });
+  });
+
+  // テスト用に公開（画面には影響なし）
+  window.__sinki = {pillars:pillars, ANIMAL_BY_NO:ANIMAL_BY_NO, kanshi:kanshi};
+})();
+</script>
+</body>
+</html>
