@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>勉強タイプ診断｜信稀塾</title>
+<meta name="description" content="1分のアンケートで、自分に合う勉強のやり方が分かる信稀塾の勉強タイプ診断。答えはスマホの中だけで計算し、送信・保存しません。">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>勉強タイプ診断｜信稀塾</h1>
+  <p>1分のアンケートで、自分に合う勉強のやり方が分かる</p>
+</header>
+<main>
+  <div class="privacy">
+    答えは<strong>このスマホの中だけ</strong>で計算して、どこにも送られません（ページを閉じると消えます）。
+    結果を先生に伝えるときは、最後の「先生に送る」を使ってね。<strong>誕生日は送られません。</strong>
+  </div>
+
+  <section class="card">
+    <h2>STEP 1　誕生日（なくてもOK）</h2>
+    <input type="date" id="birth" min="1990-01-01" max="2020-12-31" aria-label="誕生日">
+    <p class="note">入れると、どうぶつ占いの結果も少しだけ診断に入ります。入れたくなければ空欄で大丈夫。</p>
+  </section>
+
+  <section class="card">
+    <h2>STEP 2　アンケート（11問）</h2>
+    <p class="note">いちばん近いものを選んでね。正解はないので、思ったとおりに答えるのがコツ。</p>
+    <div class="progress" aria-hidden="true"><div id="progressBar"></div></div>
+    <div id="questions"></div>
+    <div><button id="run" type="button">結果を見る</button></div>
+    <div id="err" class="err" role="alert"></div>
+  </section>
+
+  <div id="result" class="hidden">
+    <section class="card">
+      <h2>あなたの勉強タイプは…</h2>
+      <div class="typebox">
+        <div class="name" id="typeName"></div>
+        <div class="catch" id="typeCatch"></div>
+      </div>
+      <div style="margin-top:12px">
+        <div class="axis"><span>勢い型</span><div class="track"><div class="dot" id="dotA"></div></div><span>計画型</span></div>
+        <div class="axis"><span>ひとり型</span><div class="track"><div class="dot" id="dotB"></div></div><span>仲間型</span></div>
+      </div>
+      <p class="note" id="animalLine"></p>
+    </section>
+
+    <section class="card">
+      <h2>あなたに合いそうなやり方</h2>
+      <div id="advice"></div>
+      <p class="note">これは「合いそうなやり方」の予想です。体験や面談で実際に試して、合うものを先生と一緒に見つけていこう。</p>
+    </section>
+
+    <section class="card">
+      <h2>先生に送る</h2>
+      <p class="note">「コピー」を押して、信稀塾の LINE に貼りつけて送ってね。誕生日は入っていません。</p>
+      <textarea id="copyText" readonly aria-label="先生に送る内容"></textarea>
+      <div><button id="copy" class="sub" type="button">コピー</button> <span id="copied" class="note"></span></div>
+    </section>
+  </div>
+</main>
+<footer>
+  勉強タイプは信稀塾が独自に作った分類で、科学的な性格検査ではありません。当たっていないと思ったら、それも大事な発見なので先生に教えてね。
+  動物占いの60分類は <a href="https://unkoi.com/special/animal/" target="_blank" rel="noopener noreferrer">unkoi.com「動物占い」特集</a>の対応表に準拠しています。
+  「どうぶつ占い」は株式会社ノラコムの登録商標です。本ツールは同社とは関係ありません。
+</footer>
+<script src="core.js"></script>
+<script src="ui.js"></script>
+<script>
+SinkiUI.init({
+  missingText: 'まだ答えていない質問があるよ：',
+  render: function (r, esc) {
+    var t = r.type, an = r.an, a = r.answers;
+    document.getElementById('animalLine').innerHTML = an
+      ? 'どうぶつ占い：No.' + an.no + '「' + esc(an.chara) + '」 <a href="' + an.url + '" target="_blank" rel="noopener noreferrer">' + esc(an.animal) + 'について読む（unkoi.com）</a>'
+      : '';
+
+    var mind = [
+      a.eff <= 1 ? '「できた」を少しずつ増やしていこう。最初は小さすぎるくらいの目標でOK。'
+                 : '「やればできる」と思えるのは強み。少し背伸びした目標にも挑戦してみよう。',
+      ['睡眠が少なめ。勉強時間を増やす前に、寝る時間をそろえるのがおすすめ。',
+       'テスト前に睡眠を削りすぎないように気をつけよう。',
+       '睡眠はばっちり。このリズムを守ろう。',
+       '睡眠はばっちり。このリズムを守ろう。'][a.sleep],
+      ['うまくいかなかったときは「何が分かった？」と自分に聞いてみよう。先生と一緒に練習していこう。',
+       '気持ちを切り替えられるのは強み。「次はこうする」をメモしておくと、もっと強くなる。',
+       'すぐに次の作戦を立てられるのはすごい。できたことにも目を向けてあげよう。'][a.fail]
+    ];
+    var li = function (xs) { return '<ul>' + xs.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>'; };
+    var html = '<h3>おすすめの進め方</h3>' + li(t.how);
+    html += '<h3>気をつけたいこと</h3>' + li([t.trap]);
+    html += '<h3>今日からできること</h3>' + li(r.habit);
+    html += '<h3>心のコンディション</h3>' + li(mind);
+    if (an) html += '<h3>どうぶつ占いからのヒント</h3>' + li([an.stem.study]);
+    document.getElementById('advice').innerHTML = html;
+
+    var L = SinkiCore.answerLabel;
+    var c = ['【勉強タイプ診断の結果】',
+      'タイプ：' + t.name];
+    if (an) c.push('どうぶつ占い：No.' + an.no + '「' + an.chara + '」');
+    c.push('集中が続く時間：' + L('focus', a.focus));
+    c.push('勉強中にスマホを触る：' + L('phone', a.phone));
+    c.push('「やればできる」と思える：' + L('eff', a.eff));
+    c.push('平日の睡眠時間：' + L('sleep', a.sleep));
+    c.push('うまくいかなかったとき：' + L('fail', a.fail));
+    c.push('当たってると思ったところ：');
+    c.push('違うと思ったところ：');
+    return c.join('\n');
+  }
+});
+</script>
+</body>
+</html>
