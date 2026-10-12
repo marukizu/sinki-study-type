@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>信稀塾 勉強タイプ診断</title>
-<meta name="description" content="生年月日から動物キャラ・四柱推命の日干をもとに勉強の傾向の仮説を出す、信稀塾の講師用ツール。入力はブラウザ内だけで計算し、送信・保存しません。">
+<meta name="description" content="どうぶつ占いと簡単なアンケートから、信稀塾オリジナルの勉強タイプと、合いそうな習慣・声かけの仮説を出す講師用ツール。入力はブラウザ内だけで計算し、送信・保存しません。">
 <style>
 :root{
   --navy:#1a3a6b;--navy-deep:#122a4f;--blue:#2f5da8;--blue-300:#8fabd4;--blue-100:#dfe8f5;--tint:#eef3fa;
@@ -23,85 +23,84 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:"Hiragino Kaku G
 header{background:var(--navy-deep);color:#fff;padding:20px 16px}
 header h1{margin:0;font-size:1.25rem;letter-spacing:.04em}
 header p{margin:4px 0 0;font-size:.85rem;opacity:.85}
-main{max-width:860px;margin:0 auto;padding:16px}
+main{max-width:820px;margin:0 auto;padding:16px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin:16px 0}
 .card h2{margin:0 0 8px;font-size:1.05rem;color:var(--navy)}
+.card h3{margin:14px 0 4px;font-size:.98rem}
 .note{font-size:.82rem;color:var(--ink-3)}
 .privacy{background:var(--tint);border-left:4px solid var(--blue);padding:10px 12px;border-radius:6px;font-size:.85rem}
-label{font-size:.9rem;font-weight:600;display:block;margin:10px 0 4px}
-input[type=date],select{width:100%;max-width:320px;padding:10px;border:1px solid var(--line);border-radius:8px;font-size:1rem;background:var(--card-2);color:var(--ink)}
+label.q{font-size:.92rem;font-weight:600;display:block;margin:0 0 6px}
+.qbox{padding:12px 0;border-bottom:1px solid var(--line)}
+.qbox:last-child{border-bottom:0}
+.opts{display:flex;flex-wrap:wrap;gap:6px}
+.opts label{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-size:.88rem;cursor:pointer;background:var(--card-2)}
+.opts input{accent-color:var(--blue)}
+input[type=date]{width:100%;max-width:320px;padding:10px;border:1px solid var(--line);border-radius:8px;font-size:1rem;background:var(--card-2);color:var(--ink)}
 button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:10px 18px;font-size:1rem;font-weight:700;cursor:pointer;margin-top:12px}
 button.sub{background:var(--blue)}
-button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--blue-300);outline-offset:2px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
-.pill{display:inline-block;background:var(--blue-100);color:var(--navy);border-radius:999px;padding:2px 10px;font-size:.8rem;font-weight:700;margin-right:6px}
-.big{font-size:1.6rem;font-weight:800;color:var(--navy);margin:2px 0}
-table{width:100%;border-collapse:collapse;font-size:.9rem}
-th,td{border-bottom:1px solid var(--line);padding:6px 4px;text-align:left;vertical-align:top}
-th{color:var(--ink-2);font-weight:600;width:28%}
+button:focus-visible,input:focus-visible{outline:3px solid var(--blue-300);outline-offset:2px}
+.typebox{background:var(--tint);border-radius:12px;padding:16px;text-align:center}
+.typebox .name{font-size:1.7rem;font-weight:800;color:var(--navy);margin:2px 0}
+.typebox .catch{font-size:.95rem;color:var(--ink-2)}
+.axis{display:grid;grid-template-columns:5.5em 1fr 5.5em;gap:8px;align-items:center;font-size:.82rem;margin:8px 0}
+.axis .track{position:relative;height:10px;background:var(--blue-100);border-radius:5px}
+.axis .dot{position:absolute;top:-4px;width:18px;height:18px;border-radius:50%;background:var(--accent);transform:translateX(-50%)}
+.axis span:last-child{text-align:right}
 ul{padding-left:1.2em;margin:6px 0}
 .hidden{display:none}
-textarea{width:100%;min-height:220px;padding:10px;border:1px solid var(--line);border-radius:8px;font-size:.85rem;background:var(--card-2);color:var(--ink);font-family:inherit}
-.bar{height:10px;border-radius:5px;background:var(--blue)}
-.five{display:grid;grid-template-columns:40px 1fr 24px;gap:6px;align-items:center;font-size:.85rem}
-footer{max-width:860px;margin:0 auto;padding:16px;font-size:.78rem;color:var(--ink-3)}
+textarea{width:100%;min-height:240px;padding:10px;border:1px solid var(--line);border-radius:8px;font-size:.85rem;background:var(--card-2);color:var(--ink);font-family:inherit}
+.err{color:#c0392b;font-size:.88rem;margin-top:8px}
+footer{max-width:820px;margin:0 auto;padding:16px;font-size:.78rem;color:var(--ink-3)}
 </style>
 </head>
 <body>
 <header>
-  <h1>信稀塾 勉強タイプ診断（講師用）</h1>
-  <p>動物キャラ・5アニマル・四柱推命をもとに、勉強の傾向の「仮説」を出すツール</p>
+  <h1>信稀塾 勉強タイプ診断</h1>
+  <p>どうぶつ占い × かんたんアンケートで、自分に合う勉強のやり方を探す（講師と一緒に使ってください）</p>
 </header>
 <main>
   <div class="privacy">
-    <strong>個人情報について：</strong>生年月日はこの画面の中だけで計算し、どこにも送信・保存しません（ページを閉じると消えます）。
+    <strong>個人情報について：</strong>入力した内容はこの画面の中だけで計算し、どこにも送信・保存しません（ページを閉じると消えます）。
     結果をメモするときは<strong>生年月日を書かず、タイプ名だけ</strong>を記録してください。
   </div>
 
   <section class="card">
-    <h2>1. 生年月日を入力</h2>
-    <label for="birth">生年月日</label>
-    <input type="date" id="birth" min="1930-01-01" max="2025-12-31">
+    <h2>1. 生年月日（どうぶつ占い）</h2>
+    <input type="date" id="birth" min="1990-01-01" max="2020-12-31" aria-label="生年月日">
+    <p class="note">分からなければ空欄でも診断できます（アンケートだけで判定します）。</p>
+  </section>
+
+  <section class="card">
+    <h2>2. アンケート（1分）</h2>
+    <p class="note">いちばん近いものを選んでください。正解はありません。</p>
+    <div id="questions"></div>
     <div><button id="run" type="button">診断する</button></div>
-    <p class="note">占いは科学的な性格診断ではありません。生徒と「当たってる？」と話すきっかけとして使い、結果で決めつけないでください。</p>
+    <div id="err" class="err" role="alert"></div>
   </section>
 
   <div id="result" class="hidden">
     <section class="card">
-      <h2>2. 結果</h2>
-      <div class="grid">
-        <div><span class="pill">動物キャラ（本質）</span><div class="big" id="animal"></div><div class="note" id="animalNo"></div></div>
-        <div><span class="pill">3分類</span><div class="big" id="group"></div><div class="note" id="groupDesc"></div></div>
-        <div><span class="pill">四柱推命の日干</span><div class="big" id="stem"></div><div class="note" id="stemImg"></div></div>
+      <h2>3. あなたの勉強タイプ</h2>
+      <div class="typebox">
+        <div class="note">信稀塾オリジナル</div>
+        <div class="name" id="typeName"></div>
+        <div class="catch" id="typeCatch"></div>
       </div>
+      <div style="margin-top:12px">
+        <div class="axis"><span>勢い型</span><div class="track"><div class="dot" id="dotA"></div></div><span>計画型</span></div>
+        <div class="axis"><span>ひとり型</span><div class="track"><div class="dot" id="dotB"></div></div><span>仲間型</span></div>
+      </div>
+      <p class="note" id="animalLine"></p>
     </section>
 
     <section class="card">
-      <h2>3. 四柱推命の命式（時柱なし）</h2>
-      <table>
-        <tr><th>年柱</th><td id="yp"></td></tr>
-        <tr><th>月柱</th><td id="mp"></td></tr>
-        <tr><th>日柱</th><td id="dp"></td></tr>
-      </table>
-      <p class="note">年柱・月柱は節入り（立春など）を概算で判定しています。節入りの前後1日に生まれた場合はずれる可能性があります。出生時刻は使いません。</p>
-      <div id="five"></div>
+      <h2>4. 合いそうな勉強のやり方（仮説）</h2>
+      <div id="advice"></div>
+      <p class="note">すべて仮説です。体験・定期面談で実際に試し、合ったものだけを個別勉強マニュアルに残してください。</p>
     </section>
 
     <section class="card">
-      <h2>4. 5アニマル（任意・公式サイトの結果を選ぶ）</h2>
-      <p class="note">5アニマルの「表面・意思決定・希望・隠れ」は計算方法が公開されていないため、このツールでは計算しません。
-      <a href="https://www.doubutsu-uranai.com/uranai_chara_5animals.php" target="_blank" rel="noopener noreferrer">公式サイト</a>で調べた結果を選ぶと、勉強の傾向に反映されます（本質は上の動物キャラを使います）。</p>
-      <div class="grid" id="facetSelects"></div>
-      <div><button id="rerun" class="sub" type="button">5アニマルを反映する</button></div>
-    </section>
-
-    <section class="card">
-      <h2>5. 勉強の傾向（仮説）</h2>
-      <div id="tendency"></div>
-    </section>
-
-    <section class="card">
-      <h2>6. 個別勉強マニュアルに貼る用</h2>
+      <h2>5. 個別勉強マニュアルに貼る用</h2>
       <p class="note">生年月日は含まれていません。Notion の「個別勉強マニュアル」の「1. 自分のタイプと勉強スタイル」に貼り付けてください。</p>
       <textarea id="copyText" readonly aria-label="コピー用テキスト"></textarea>
       <div><button id="copy" class="sub" type="button">コピー</button> <span id="copied" class="note"></span></div>
@@ -109,20 +108,16 @@ footer{max-width:860px;margin:0 auto;padding:16px;font-size:.78rem;color:var(--i
   </div>
 </main>
 <footer>
-  信稀塾 講師用ツール。動物キャラは日干支（60分類）から一般に知られている対応表で算出しています。公式サイトの結果と異なる場合は公式を優先してください。
-  「どうぶつ占い」は株式会社ノラコムの登録商標です。本ツールは同社とは関係ありません。勉強の傾向は信稀塾が独自に考えた仮説です。
+  信稀塾 講師用ツール。勉強タイプは信稀塾が独自に作った分類で、科学的な性格検査ではありません。
+  動物キャラは生まれた日の干支（60分類）から一般に知られている対応表で算出しています。公式サイトの結果と異なる場合は公式を優先してください。
+  「どうぶつ占い」は株式会社ノラコムの登録商標です。本ツールは同社とは関係ありません。
 </footer>
 
 <script>
 (function(){
   'use strict';
-  var STEMS = ['甲','乙','丙','丁','戊','己','庚','辛','壬','癸'];
-  var BRANCHES = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
-  var STEM_EL = ['木','木','火','火','土','土','金','金','水','水'];
-  var BRANCH_EL = ['水','土','木','木','土','火','火','土','金','金','土','水'];
-  var ELEMENTS = ['木','火','土','金','水'];
 
-  // 干支番号（1〜60）→ 12動物（一般に知られている対応表）
+  // ---- どうぶつ占い（干支番号 1〜60 → 12動物） ----
   var ANIMAL_BY_NO = [
     'チータ','たぬき','猿','コアラ','黒ひょう','虎','チータ','たぬき','猿','コアラ',
     'こじか','ゾウ','狼','ひつじ','猿','コアラ','こじか','ゾウ','狼','ひつじ',
@@ -131,173 +126,158 @@ footer{max-width:860px;margin:0 auto;padding:16px;font-size:.78rem;color:var(--i
     'たぬき','チータ','虎','黒ひょう','コアラ','猿','たぬき','チータ','虎','黒ひょう',
     'ライオン','ライオン','黒ひょう','虎','虎','黒ひょう','ライオン','ライオン','黒ひょう','虎'
   ];
-  var GROUP = {
-    'こじか':'MOON','黒ひょう':'MOON','たぬき':'MOON','ひつじ':'MOON',
-    '狼':'EARTH','猿':'EARTH','虎':'EARTH','コアラ':'EARTH',
-    'チータ':'SUN','ライオン':'SUN','ゾウ':'SUN','ペガサス':'SUN'
-  };
-  var GROUP_INFO = {
-    MOON:{desc:'人との関係・安心感を大事にするタイプ',study:'信頼できる講師・仲間との関係づくりを先に。こまめな声かけと「一緒にやる」環境で伸びやすい。'},
-    EARTH:{desc:'目標・計画・成果を大事にするタイプ',study:'数字で見える目標と計画を本人と決める。時間の使い方の効率や、達成リストのレベルアップが響きやすい。'},
-    SUN:{desc:'可能性・気分・ノリを大事にするタイプ',study:'大きな夢と「できる」という期待を伝える。細かく縛りすぎず、勢いがあるときに一気に進める。'}
-  };
+  // 動物ごとの軸への小さな補正（A：+計画/−勢い、B：+仲間/−ひとり）と一言
   var ANIMAL = {
-    '狼':{trait:'自分のペース・独自のやり方を大事にする',how:'一人で集中できる時間を確保し、計画は本人に作らせる',talk:'やり方を押しつけず「あなたらしい」を認める'},
-    'こじか':{trait:'信頼できる人と一緒だと力を出せる。慎重',how:'こまめな報告・確認。一緒にやる仲間がいる環境',talk:'小さなことも褒める。安心感を伝える'},
-    '猿':{trait:'器用で短期集中が得意。ゲーム感覚が好き',how:'短い制限時間・小テスト・スコアづけ',talk:'すぐに結果を返す。「今日は何点？」'},
-    'チータ':{trait:'チャレンジ精神と瞬発力。飽きやすい面も',how:'高い目標＋短い区切り。科目をこまめに切り替える',talk:'「これは難しいよ」と挑戦として出す'},
-    '黒ひょう':{trait:'新しいもの好き。プライドと美意識がある',how:'見た目にこだわったノート・ツール。新しいやり方を試す',talk:'人前で責めない。メンツを大事にする'},
-    'ライオン':{trait:'完璧主義で自分に厳しい。特別扱いが好き',how:'質の高い参考書・高い基準。計画どおりに進める',talk:'期待していることを伝える。完璧でなくてもよいとも伝える'},
-    '虎':{trait:'バランス感覚と面倒見の良さ。自分で決めたい',how:'全科目をバランスよく。友達に教えて理解を深める',talk:'選択肢を示して本人に決めさせる'},
-    'たぬき':{trait:'経験と実績を重んじる。人当たりが良い',how:'定番の参考書・先輩のやり方。繰り返しで身につける',talk:'「合格した人はこうやっていた」と実績で示す'},
-    'コアラ':{trait:'長期的な計画が得意。休む時間も必要',how:'逆算の年間計画＋休憩を先に予定に入れる',talk:'先の見通しを示す。休むことも計画と認める'},
-    'ゾウ':{trait:'努力家で、やると決めたらやり抜く',how:'1つの目標に集中。繰り返し・長時間の積み上げ',talk:'努力そのものを認める。無理のしすぎに注意'},
-    'ひつじ':{trait:'協調性があり、みんなと一緒が好き',how:'自習室や仲間と一緒に勉強。役割を持つ',talk:'「みんなも頑張ってる」。孤立させない'},
-    'ペガサス':{trait:'自由で気分屋。ひらめきがある',how:'気分に合わせて科目を選べる「メニュー式」の計画',talk:'縛りすぎない。ノリと勢いを大事にする'}
+    '狼':{a:+1,b:-2,talk:'やり方を押しつけず、本人の決めたやり方を認める'},
+    'こじか':{a:0,b:+2,talk:'小さなことも褒め、安心感を伝える'},
+    '猿':{a:+1,b:0,talk:'すぐに結果を返す（「今日は何点？」）'},
+    'チータ':{a:-2,b:0,talk:'「これは難しいよ」と挑戦として出す'},
+    '黒ひょう':{a:-1,b:+1,talk:'人前で責めない。新しいやり方を一緒に試す'},
+    'ライオン':{a:+1,b:-1,talk:'期待していると伝え、完璧でなくてよいとも伝える'},
+    '虎':{a:+1,b:0,talk:'選択肢を示して本人に決めさせる'},
+    'たぬき':{a:+1,b:+1,talk:'「合格した人はこうやっていた」と実績で示す'},
+    'コアラ':{a:+2,b:0,talk:'先の見通しを示し、休むことも計画と認める'},
+    'ゾウ':{a:+1,b:-1,talk:'努力そのものを認め、無理のしすぎに注意する'},
+    'ひつじ':{a:0,b:+2,talk:'「みんなも頑張ってる」と伝え、孤立させない'},
+    'ペガサス':{a:-2,b:0,talk:'縛りすぎず、ノリと勢いを大事にする'}
   };
-  var STEM_INFO = {
-    '甲':{img:'木・大樹',trait:'まっすぐ伸びる向上心。一度決めたら曲げない',study:'長期目標を決めて一本道で積み上げる。計画を変えるときは理由を説明する'},
-    '乙':{img:'木・草花',trait:'柔軟で協調的。しなやかな粘り強さ',study:'仲間や環境に合わせて伸びる。小さな成功を重ねる'},
-    '丙':{img:'火・太陽',trait:'明るくエネルギッシュ。飽きやすさも',study:'目立つ目標と短期決戦。人に教えると定着しやすい'},
-    '丁':{img:'火・灯火',trait:'内に秘めた情熱と集中力。繊細',study:'静かな環境で深く取り組む。丁寧なフィードバックが効く'},
-    '戊':{img:'土・山',trait:'どっしり安定。マイペース',study:'決まったルーティンを固める。急な計画変更は避ける'},
-    '己':{img:'土・田畑',trait:'吸収力があり面倒見がよい。心配性な面も',study:'基礎を育てる復習中心の計画。不安を言葉にさせる'},
-    '庚':{img:'金・鉄',trait:'決断力があり白黒はっきり。競争に強い',study:'ライバル・順位・明確な基準を置く'},
-    '辛':{img:'金・宝石',trait:'美意識とプライド。繊細',study:'量より質。きれいに整理したノート。人前で責めない'},
-    '壬':{img:'水・大河',trait:'スケールが大きく自由。束縛を嫌う',study:'大きなビジョンを共有し、流れで科目を切り替える'},
-    '癸':{img:'水・雨露',trait:'知的で慎重。想像力が豊か',study:'理解を重視し、じっくり考える時間をとる。見通しを示す'}
-  };
-  var FACETS = [
-    {key:'表面',hint:'塾や学校での見え方。初対面の印象に合わせた接し方の参考'},
-    {key:'意思決定',hint:'計画や志望校を決めるときの決め方の参考'},
-    {key:'希望',hint:'本人が無意識に憧れている姿。やる気の火種の参考'},
-    {key:'隠れ',hint:'ピンチ（スランプ・模試の失敗）のときに出る面。メンタル支援の参考'}
+
+  // ---- アンケート ----
+  var LIKERT = ['あてはまらない','あまりあてはまらない','ややあてはまる','あてはまる'];
+  var Q = [
+    {id:'a1',axis:'A',sign:+1,text:'勉強を始める前に「今日やること」を決めることが多い'},
+    {id:'a2',axis:'A',sign:+1,text:'決めた計画どおりに進むと気持ちいい'},
+    {id:'a3',axis:'A',sign:-1,text:'やる気が出たときに一気にやるほうが好きだ'},
+    {id:'b1',axis:'B',sign:+1,text:'誰かがいる場所（自習室など）のほうが勉強がはかどる'},
+    {id:'b2',axis:'B',sign:+1,text:'分からないところは、すぐ人に聞いて解決したい'},
+    {id:'b3',axis:'B',sign:-1,text:'一人で静かな場所のほうが集中できる'},
+    {id:'focus',text:'集中が続くのは、だいたいどれくらい？',opts:['15分くらい','30分くらい','60分くらい','90分以上']},
+    {id:'phone',text:'勉強中、ついスマホを触ってしまう',opts:LIKERT},
+    {id:'eff',text:'「やればできる」と思える',opts:LIKERT},
+    {id:'sleep',text:'平日の睡眠時間は？',opts:['6時間未満','6〜7時間','7〜8時間','8時間以上']},
+    {id:'fail',text:'テストでうまくいかなかったとき、近いのは？',opts:['自分はダメだと思ってしばらく落ち込む','落ち込むけど、なんとか切り替える','すぐに原因を考えて次の作戦を立てる']}
   ];
-  var ANIMAL_NAMES = Object.keys(ANIMAL);
 
-  function daysFrom1900(y,m,d){ return Math.round((Date.UTC(y,m-1,d)-Date.UTC(1900,0,1))/86400000); }
+  var TYPES = {
+    'PS':{name:'コツコツ職人タイプ',catch:'自分で設計図を引いて、一人で黙々と積み上げる',
+      how:['1週間の計画を自分で作り、講師はチェック役に回る','静かな環境で、決まった時間に決まった量をこなす','記録表やチェックリストで「積み上がり」を見える化する'],
+      trap:'計画どおりに行かないと一気に崩れやすい。計画には予備日を入れておく',
+      talk:'計画の質を認める。崩れたときは「計画を直そう」と一緒に組み直す'},
+    'PG':{name:'キャプテンタイプ',catch:'目標を決めて、仲間と一緒に引っぱっていく',
+      how:['自習室や勉強会で、仲間と目標を宣言してから始める','計画を講師や仲間と共有し、進み具合を報告し合う','人に教える役を持つと理解が深まる'],
+      trap:'周りに合わせすぎて自分の計画が後回しになりやすい',
+      talk:'みんなの前で頑張りを認める。自分の勉強時間を守れているかも一緒に確認する'},
+    'MS':{name:'スプリンタータイプ',catch:'波に乗ったら一人で一気に走り抜ける',
+      how:['やる気があるときに集中して進める「短期決戦」を何度も作る','科目をこまめに切り替えて飽きを防ぐ','ボトム（最低限やる量）だけは毎日守り、残りは勢いに任せる'],
+      trap:'やる気がない日にゼロになりやすい。ボトムの約束が命綱',
+      talk:'細かく縛りすぎない。「今週の勝負どころ」を一緒に決める'},
+    'MG':{name:'ムードメーカータイプ',catch:'みんなの熱に乗って、楽しみながら伸びる',
+      how:['仲間と一緒の場所・時間で勉強する','ゲーム感覚の小テストや、仲間との競争を取り入れる','その日の気分で科目を選べる「メニュー式」の計画にする'],
+      trap:'一人になると手が止まりやすい。一人の日のif-thenプランを決めておく',
+      talk:'明るく巻き込む。「一緒にやろう」が一番効く'}
+  };
+
   function mod(a,n){ return ((a%n)+n)%n; }
-  function kanshi(i){ return STEMS[i%10]+BRANCHES[i%12]; }
-
-  // 節入り日（概算）：各月の節の目安日
-  var SETSU = {1:6,2:4,3:6,4:5,5:6,6:6,7:7,8:8,9:8,10:8,11:7,12:7};
-
-  function pillars(y,m,d){
-    var dayIdx = mod(daysFrom1900(y,m,d)+10,60);          // 1900-01-01 = 甲戌（10）
-    var afterSetsu = d >= SETSU[m];
-    var sy = (m < 2 || (m === 2 && !afterSetsu)) ? y-1 : y; // 立春前は前年
-    var yearIdx = mod(sy-4,60);                             // 1984 = 甲子
-    var monthNo = afterSetsu ? m : m-1;                     // 節月（1=小寒〜）
-    if (monthNo === 0) monthNo = 12;
-    var branch = mod(monthNo+0,12);                          // 1月節=丑, 2月節=寅 …
-    var firstStem = [2,4,6,8,0][yearIdx%10%5];               // 五虎遁：甲己→丙寅…
-    var offset = mod(branch-2,12);                           // 寅月からの月数
-    var mStem = mod(firstStem+offset,10);
-    return {day:dayIdx, year:yearIdx, mStem:mStem, mBranch:branch};
+  function animalOf(v){
+    var p = v.split('-').map(Number);
+    var days = Math.round((Date.UTC(p[0],p[1]-1,p[2])-Date.UTC(1900,0,1))/86400000);
+    var idx = mod(days+10,60); // 1900-01-01 = 甲戌（干支番号11）
+    return {no:idx+1, animal:ANIMAL_BY_NO[idx]};
   }
-
-  function el(tag,html){ var e=document.createElement(tag); e.innerHTML=html; return e; }
   function esc(s){ return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
 
-  var state = null;
-
-  function buildFacetSelects(){
-    var box = document.getElementById('facetSelects');
-    FACETS.forEach(function(f){
-      var wrap = document.createElement('div');
-      var id = 'facet-'+f.key;
-      var opts = '<option value="">（未選択）</option>' + ANIMAL_NAMES.map(function(a){return '<option>'+a+'</option>';}).join('');
-      wrap.innerHTML = '<label for="'+id+'">'+f.key+'</label><select id="'+id+'">'+opts+'</select><div class="note">'+f.hint+'</div>';
-      box.appendChild(wrap);
+  function buildQuestions(){
+    var box = document.getElementById('questions');
+    Q.forEach(function(q, i){
+      var opts = q.opts || LIKERT;
+      var html = '<div class="qbox" role="radiogroup" aria-labelledby="ql-'+q.id+'"><span class="q" id="ql-'+q.id+'" style="font-weight:600;display:block;margin-bottom:6px">Q'+(i+1)+'. '+esc(q.text)+'</span><div class="opts">';
+      opts.forEach(function(o, j){
+        html += '<label><input type="radio" name="'+q.id+'" value="'+j+'">'+esc(o)+'</label>';
+      });
+      html += '</div></div>';
+      box.insertAdjacentHTML('beforeend', html);
     });
   }
 
-  function run(){
-    var v = document.getElementById('birth').value;
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(v)) { alert('生年月日を入力してください'); return; }
-    var p = v.split('-').map(Number);
-    var pl = pillars(p[0],p[1],p[2]);
-    var no = pl.day + 1;
-    var animal = ANIMAL_BY_NO[pl.day];
-    var group = GROUP[animal];
-    var stem = STEMS[pl.day%10];
-    state = {no:no, animal:animal, group:group, stem:stem, pl:pl};
-
-    document.getElementById('animal').textContent = animal;
-    document.getElementById('animalNo').textContent = '干支番号 '+no+'（'+kanshi(pl.day)+'）';
-    document.getElementById('group').textContent = group;
-    document.getElementById('groupDesc').textContent = GROUP_INFO[group].desc;
-    document.getElementById('stem').textContent = stem+'（'+STEM_EL[pl.day%10]+'）';
-    document.getElementById('stemImg').textContent = STEM_INFO[stem].img;
-
-    var mK = STEMS[pl.mStem]+BRANCHES[pl.mBranch];
-    document.getElementById('yp').textContent = kanshi(pl.year);
-    document.getElementById('mp').textContent = mK;
-    document.getElementById('dp').textContent = kanshi(pl.day);
-
-    var chars = [pl.year%10, pl.mStem, pl.day%10].map(function(i){return STEM_EL[i];})
-      .concat([pl.year%12, pl.mBranch, pl.day%12].map(function(i){return BRANCH_EL[i];}));
-    var cnt = {}; ELEMENTS.forEach(function(e){cnt[e]=0;}); chars.forEach(function(e){cnt[e]++;});
-    var fiveHtml = '<p class="note" style="margin-top:10px">五行のバランス（年・月・日の6文字）</p>' + ELEMENTS.map(function(e){
-      return '<div class="five"><span>'+e+'</span><div class="bar" style="width:'+(cnt[e]/6*100)+'%;min-width:'+(cnt[e]?4:0)+'px"></div><span>'+cnt[e]+'</span></div>';
-    }).join('');
-    var lacking = ELEMENTS.filter(function(e){return cnt[e]===0;});
-    if (lacking.length) fiveHtml += '<p class="note">少ない五行：'+lacking.join('・')+'（参考）</p>';
-    document.getElementById('five').innerHTML = fiveHtml;
-
-    document.getElementById('result').classList.remove('hidden');
-    render();
-    document.getElementById('result').scrollIntoView({behavior:'smooth'});
+  function answer(id){
+    var el = document.querySelector('input[name="'+id+'"]:checked');
+    return el ? Number(el.value) : null;
   }
 
-  function render(){
-    if (!state) return;
-    var a = ANIMAL[state.animal], g = GROUP_INFO[state.group], s = STEM_INFO[state.stem];
-    var facets = FACETS.map(function(f){ return {key:f.key, animal:document.getElementById('facet-'+f.key).value}; });
+  function run(){
+    var err = document.getElementById('err'); err.textContent = '';
+    var ans = {}, missing = [];
+    Q.forEach(function(q, i){ var v = answer(q.id); if (v === null) missing.push('Q'+(i+1)); ans[q.id] = v; });
+    if (missing.length){ err.textContent = '未回答があります：'+missing.join('、'); return; }
 
-    var html = '';
-    html += '<h3 style="margin:8px 0 4px;font-size:1rem">本質：'+esc(state.animal)+'（'+esc(state.group)+'）</h3><ul>'+
-      '<li>傾向：'+esc(a.trait)+'</li><li>合いそうなやり方：'+esc(a.how)+'</li><li>声かけ：'+esc(a.talk)+'</li><li>'+esc(state.group)+'：'+esc(g.study)+'</li></ul>';
-    html += '<h3 style="margin:12px 0 4px;font-size:1rem">四柱推命の日干：'+esc(state.stem)+'（'+esc(s.img)+'）</h3><ul>'+
-      '<li>傾向：'+esc(s.trait)+'</li><li>勉強の進め方：'+esc(s.study)+'</li></ul>';
-    var picked = facets.filter(function(f){return f.animal;});
-    if (picked.length){
-      html += '<h3 style="margin:12px 0 4px;font-size:1rem">5アニマル</h3><ul>';
-      picked.forEach(function(f){
-        var x = ANIMAL[f.animal];
-        var line = {
-          '表面':'塾や学校では「'+x.trait+'」ように見えやすい。初めのうちは「'+x.talk+'」を意識して接する',
-          '意思決定':'計画や志望校を決めるときは「'+x.how+'」の形で選ばせると決めやすい',
-          '希望':'憧れているのは「'+x.trait+'」姿。やる気が落ちたときの声かけの材料にする',
-          '隠れ':'スランプのときは「'+x.trait+'」面が出やすい。そのときは「'+x.talk+'」で支える'
-        }[f.key];
-        html += '<li><strong>'+esc(f.key)+'（'+esc(f.animal)+'）</strong>：'+esc(line)+'</li>';
-      });
-      html += '</ul>';
+    // 軸スコア：各設問 0〜3 → −1.5〜+1.5 に中心化して合計（3問で −4.5〜+4.5）
+    var A = 0, B = 0;
+    Q.forEach(function(q){ if (!q.axis) return; var s = (ans[q.id]-1.5)*q.sign; if (q.axis==='A') A+=s; else B+=s; });
+
+    var birth = document.getElementById('birth').value, an = null;
+    if (/^\d{4}-\d{2}-\d{2}$/.test(birth)) {
+      an = animalOf(birth);
+      var w = ANIMAL[an.animal];
+      A += w.a*0.5; B += w.b*0.5; // 動物キャラは小さく補正（アンケート優先）
     }
-    html += '<p class="note">すべて仮説です。体験・定期面談で実際に試し、合ったものだけを個別勉強マニュアルに残してください。</p>';
-    document.getElementById('tendency').innerHTML = html;
+    var key = (A >= 0 ? 'P' : 'M') + (B >= 0 ? 'G' : 'S');
+    var t = TYPES[key];
 
-    var t = [];
-    t.push('【勉強タイプ（仮説）】※生年月日は記録しない');
-    t.push('・動物キャラ（本質）：'+state.animal+'（'+state.group+'）');
-    t.push('　傾向：'+a.trait);
-    t.push('　合いそうなやり方：'+a.how);
-    t.push('　声かけ：'+a.talk);
-    t.push('　'+state.group+'：'+g.study);
-    t.push('・四柱推命の日干：'+state.stem+'（'+s.img+'）');
-    t.push('　傾向：'+s.trait);
-    t.push('　勉強の進め方：'+s.study);
-    picked.forEach(function(f){ t.push('・5アニマル '+f.key+'：'+f.animal); });
-    t.push('・本人の反応（当たってる／違う）：');
-    t.push('・試して合ったやり方：');
-    document.getElementById('copyText').value = t.join('\n');
+    document.getElementById('typeName').textContent = t.name;
+    document.getElementById('typeCatch').textContent = t.catch;
+    var MAX = 5.5;
+    document.getElementById('dotA').style.left = (50 + Math.max(-1,Math.min(1,A/MAX))*50)+'%';
+    document.getElementById('dotB').style.left = (50 + Math.max(-1,Math.min(1,B/MAX))*50)+'%';
+    document.getElementById('animalLine').textContent = an
+      ? '動物キャラ：'+an.animal+'（干支番号 '+an.no+'）。アンケートの結果に少しだけ反映しています。'
+      : '生年月日が未入力のため、アンケートだけで判定しました。';
+
+    // 習慣・メンタルの提案
+    var focusMin = [15,25,50,80][ans.focus];
+    var habit = [], mental = [];
+    habit.push('集中の単位：'+focusMin+'分集中＋'+(focusMin>=50?10:5)+'分休憩から試す');
+    habit.push('ボトム（最低限やる量）：平日は'+(ans.focus<=1?'20':'30')+'分から始め、守れたら少しずつ増やす');
+    if (ans.phone >= 2) habit.push('誘惑対策：勉強中はスマホを別の部屋に置く／タイマーアプリでロックする（「つい触る」が強め）');
+    else habit.push('誘惑対策：今の工夫を続ける。勉強中のスマホの置き場所だけ決めておく');
+    habit.push('if-thenプランの例：'+(key.charAt(1)==='G' ? '「自習室に着いたら、最初の'+focusMin+'分は英単語」' : '「帰宅してカバンを置いたら、'+focusMin+'分だけ机に向かう」'));
+    habit.push('進捗の見える化：'+(key.charAt(0)==='P' ? '計画表に達成チェックを入れる' : '1日の勉強時間をカレンダーに書いて「連続記録」をつなぐ'));
+
+    if (ans.eff <= 1) mental.push('自己効力感：低め。まずは確実にできる小さな目標（スモールステップ）で「できた」を積み重ねる');
+    else mental.push('自己効力感：高め〜ふつう。少し背伸びした目標でも挑戦できる');
+    if (ans.sleep === 0) mental.push('睡眠：6時間未満。勉強時間を増やす前に、就寝時刻をそろえることから始める');
+    else if (ans.sleep === 1) mental.push('睡眠：6〜7時間。テスト前に削りすぎないよう注意する');
+    else mental.push('睡眠：十分とれている。この生活リズムを守る');
+    mental.push(['リフレーミング：失敗を「自分はダメ」と受け止めやすい。講師が「何が分かった？」と問い、次の一手に言い換える練習をする',
+                 'リフレーミング：切り替えはできる。「次はこうする」を言葉にして記録すると、さらに強くなる',
+                 'リフレーミング：とても上手。原因分析が厳しくなりすぎないよう、できた点にも目を向ける'][ans.fail]);
+
+    var html = '<h3>'+esc(t.name)+'の進め方</h3><ul>'+t.how.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul>';
+    html += '<h3>つまずきやすいところ</h3><ul><li>'+esc(t.trap)+'</li></ul>';
+    html += '<h3>習慣（信稀塾の中心①）</h3><ul>'+habit.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul>';
+    html += '<h3>メンタル（信稀塾の中心②）</h3><ul>'+mental.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul>';
+    html += '<h3>講師の声かけ</h3><ul><li>'+esc(t.talk)+'</li>'+(an?'<li>'+esc(an.animal)+'：'+esc(ANIMAL[an.animal].talk)+'</li>':'')+'</ul>';
+    document.getElementById('advice').innerHTML = html;
+
+    var c = [];
+    c.push('【勉強タイプ診断（仮説）】※生年月日は記録しない');
+    c.push('・タイプ：'+t.name+'（'+t.catch+'）');
+    if (an) c.push('・動物キャラ：'+an.animal);
+    c.push('・進め方：'+t.how.join('／'));
+    c.push('・つまずきやすいところ：'+t.trap);
+    c.push('・習慣：'); habit.forEach(function(x){ c.push('　- '+x); });
+    c.push('・メンタル：'); mental.forEach(function(x){ c.push('　- '+x); });
+    c.push('・声かけ：'+t.talk+(an?'／'+ANIMAL[an.animal].talk:''));
+    c.push('・本人の反応（当たってる／違う）：');
+    c.push('・試して合ったやり方：');
+    document.getElementById('copyText').value = c.join('\n');
+
+    var r = document.getElementById('result'); r.classList.remove('hidden');
+    r.scrollIntoView({behavior:'smooth'});
   }
 
   document.addEventListener('DOMContentLoaded', function(){
-    buildFacetSelects();
+    buildQuestions();
     document.getElementById('run').addEventListener('click', run);
-    document.getElementById('rerun').addEventListener('click', render);
     document.getElementById('copy').addEventListener('click', function(){
       var ta = document.getElementById('copyText');
       var done = function(){ document.getElementById('copied').textContent = 'コピーしました'; };
@@ -306,9 +286,6 @@ footer{max-width:860px;margin:0 auto;padding:16px;font-size:.78rem;color:var(--i
       } else { ta.select(); document.execCommand('copy'); done(); }
     });
   });
-
-  // テスト用に公開（画面には影響なし）
-  window.__sinki = {pillars:pillars, ANIMAL_BY_NO:ANIMAL_BY_NO, kanshi:kanshi};
 })();
 </script>
 </body>
