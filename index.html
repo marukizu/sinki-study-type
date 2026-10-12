@@ -109,7 +109,7 @@ footer{max-width:820px;margin:0 auto;padding:16px;font-size:.78rem;color:var(--i
 </main>
 <footer>
   信稀塾 講師用ツール。勉強タイプは信稀塾が独自に作った分類で、科学的な性格検査ではありません。
-  動物キャラは生まれた日の干支（60分類）から一般に知られている対応表で算出しています。公式サイトの結果と異なる場合は公式を優先してください。
+  動物キャラは生まれた日の干支（60分類）から一般に知られている対応表で算出しています。60分類の名前（「〇〇な＋動物」）は生まれた日の十干をもとに信稀塾が独自に付けたもので、公式のキャラクター名ではありません。番号（No.）は公式の60分類の番号と対応する想定です。公式サイトの結果と異なる場合は公式を優先してください。
   「どうぶつ占い」は株式会社ノラコムの登録商標です。本ツールは同社とは関係ありません。
 </footer>
 
@@ -141,6 +141,22 @@ footer{max-width:820px;margin:0 auto;padding:16px;font-size:.78rem;color:var(--i
     'ひつじ':{a:0,b:+2,talk:'「みんなも頑張ってる」と伝え、孤立させない'},
     'ペガサス':{a:-2,b:0,talk:'縛りすぎず、ノリと勢いを大事にする'}
   };
+
+  // ---- 60分類：生まれた日の十干 × 12動物（名称は信稀塾オリジナル） ----
+  var STEMS = ['甲','乙','丙','丁','戊','己','庚','辛','壬','癸'];
+  var BRANCHES = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+  var STEM = [
+    {adj:'まっすぐ伸びる',a:+0.5,b:0,study:'長期目標を決めて一本道で積み上げる。計画を変えるときは理由を説明する'},
+    {adj:'しなやかな',a:0,b:+0.5,study:'仲間や環境に合わせて伸びる。小さな成功を重ねる'},
+    {adj:'太陽のような',a:-0.5,b:+0.5,study:'目立つ目標と短期決戦。人に教えると定着しやすい'},
+    {adj:'灯火のような',a:0,b:-0.5,study:'静かな環境で深く取り組む。丁寧なフィードバックが効く'},
+    {adj:'どっしりした',a:+0.5,b:0,study:'決まったルーティンを固める。急な計画変更は避ける'},
+    {adj:'面倒見のいい',a:0,b:+0.5,study:'基礎を育てる復習中心の計画。不安を言葉にさせる'},
+    {adj:'決断の速い',a:+0.5,b:0,study:'ライバル・順位・明確な基準を置く'},
+    {adj:'磨きのかかった',a:0,b:-0.5,study:'量より質。きれいに整理したノート。人前で責めない'},
+    {adj:'スケールの大きい',a:-0.5,b:0,study:'大きなビジョンを共有し、流れで科目を切り替える'},
+    {adj:'思慮深い',a:0,b:-0.5,study:'理解を重視し、じっくり考える時間をとる。見通しを示す'}
+  ];
 
   // ---- アンケート ----
   var LIKERT = ['あてはまらない','あまりあてはまらない','ややあてはまる','あてはまる'];
@@ -182,7 +198,8 @@ footer{max-width:820px;margin:0 auto;padding:16px;font-size:.78rem;color:var(--i
     var p = v.split('-').map(Number);
     var days = Math.round((Date.UTC(p[0],p[1]-1,p[2])-Date.UTC(1900,0,1))/86400000);
     var idx = mod(days+10,60); // 1900-01-01 = 甲戌（干支番号11）
-    return {no:idx+1, animal:ANIMAL_BY_NO[idx]};
+    var animal = ANIMAL_BY_NO[idx], st = STEM[idx%10];
+    return {no:idx+1, animal:animal, stem:st, kanshi:STEMS[idx%10]+BRANCHES[idx%12], type60:st.adj+animal};
   }
   function esc(s){ return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
 
@@ -218,7 +235,7 @@ footer{max-width:820px;margin:0 auto;padding:16px;font-size:.78rem;color:var(--i
     if (/^\d{4}-\d{2}-\d{2}$/.test(birth)) {
       an = animalOf(birth);
       var w = ANIMAL[an.animal];
-      A += w.a*0.5; B += w.b*0.5; // 動物キャラは小さく補正（アンケート優先）
+      A += w.a*0.5 + an.stem.a; B += w.b*0.5 + an.stem.b; // 60分類は小さく補正（アンケート優先）
     }
     var key = (A >= 0 ? 'P' : 'M') + (B >= 0 ? 'G' : 'S');
     var t = TYPES[key];
@@ -229,7 +246,7 @@ footer{max-width:820px;margin:0 auto;padding:16px;font-size:.78rem;color:var(--i
     document.getElementById('dotA').style.left = (50 + Math.max(-1,Math.min(1,A/MAX))*50)+'%';
     document.getElementById('dotB').style.left = (50 + Math.max(-1,Math.min(1,B/MAX))*50)+'%';
     document.getElementById('animalLine').textContent = an
-      ? '動物キャラ：'+an.animal+'（干支番号 '+an.no+'）。アンケートの結果に少しだけ反映しています。'
+      ? '60分類：No.'+an.no+'「'+an.type60+'」（'+an.kanshi+'・'+an.animal+'）。アンケートの結果に少しだけ反映しています。'
       : '生年月日が未入力のため、アンケートだけで判定しました。';
 
     // 習慣・メンタルの提案
@@ -255,13 +272,14 @@ footer{max-width:820px;margin:0 auto;padding:16px;font-size:.78rem;color:var(--i
     html += '<h3>つまずきやすいところ</h3><ul><li>'+esc(t.trap)+'</li></ul>';
     html += '<h3>習慣（信稀塾の中心①）</h3><ul>'+habit.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul>';
     html += '<h3>メンタル（信稀塾の中心②）</h3><ul>'+mental.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul>';
+    if (an) html += '<h3>60分類「'+esc(an.type60)+'」の勉強のヒント</h3><ul><li>'+esc(an.stem.study)+'</li></ul>';
     html += '<h3>講師の声かけ</h3><ul><li>'+esc(t.talk)+'</li>'+(an?'<li>'+esc(an.animal)+'：'+esc(ANIMAL[an.animal].talk)+'</li>':'')+'</ul>';
     document.getElementById('advice').innerHTML = html;
 
     var c = [];
     c.push('【勉強タイプ診断（仮説）】※生年月日は記録しない');
     c.push('・タイプ：'+t.name+'（'+t.catch+'）');
-    if (an) c.push('・動物キャラ：'+an.animal);
+    if (an) { c.push('・動物キャラ（60分類）：No.'+an.no+'「'+an.type60+'」（'+an.animal+'）'); c.push('・60分類のヒント：'+an.stem.study); }
     c.push('・進め方：'+t.how.join('／'));
     c.push('・つまずきやすいところ：'+t.trap);
     c.push('・習慣：'); habit.forEach(function(x){ c.push('　- '+x); });
